@@ -1,0 +1,6 @@
+Nutest
+======
+
+```shell
+activator run
+```
