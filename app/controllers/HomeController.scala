@@ -8,12 +8,10 @@ import play.api.mvc._
 
 
 /**
- * This controller creates an `Action` to handle HTTP requests to the
- * application's home page.
+ * This controller creates an action to to showoff the application's information.
  */
 @Singleton
 class HomeController @Inject() (env: Environment, conf: Configuration) extends Controller {
-
   /**
    * Returns the application status.
    */
@@ -21,5 +19,4 @@ class HomeController @Inject() (env: Environment, conf: Configuration) extends C
     Ok(Json.obj("name" -> conf.getString("app.name"), "version" -> conf.getString("app.version"),
       "status" -> "OK"))
   }
-
 }

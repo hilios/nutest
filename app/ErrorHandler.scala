@@ -9,28 +9,44 @@ import play.api.{Environment, Mode}
 import scala.concurrent._
 
 /**
-  * This class handles errors thrown by the application and returns the reason phrase as an JSON
+  * This class handles errors thrown by the application and returns the reason as an JSON.
   */
 class ErrorHandler @Inject() (env: Environment) extends HttpErrorHandler {
-  def reasonPhrase(statusCode: Int) = HttpResponseStatus.valueOf(statusCode).reasonPhrase
+  /**
+    * Returns a humanized phrase from an HTTP status code.
+    *
+    * @param statusCode The HTTP status code
+    * @return The human readable phrase
+    */
+  def reasonPhrase(statusCode: Int): String = HttpResponseStatus.valueOf(statusCode).reasonPhrase
 
-  def onClientError(request: RequestHeader, statusCode: Int, message: String) = {
+  /**
+    * Returns an error output as an JSON string (HTTP status code not between 200-299).
+    *
+    * @param requestHeader The request header
+    * @param statusCode The HTTP status code
+    * @param message The error message
+    * @return The error JSON output
+    */
+  def onClientError(requestHeader: RequestHeader, statusCode: Int, message: String) = {
+    val reason: String = if (message != "") message else reasonPhrase(statusCode)
     Future.successful(
-      if (message == "") {
-        Status(statusCode)(Json.obj("error" -> reasonPhrase(statusCode)))
-      } else {
-        Status(statusCode)(Json.obj("error" -> message))
-      }
+      Status(statusCode)(Json.obj("error" -> reason))
     )
   }
 
-  def onServerError(request: RequestHeader, exception: Throwable) = {
+  /**
+    * Returns an error output as an JSON string.
+    *
+    * @param requestHeader The request header
+    * @param exception The exception object
+    * @return The error JSON output
+    */
+  def onServerError(requestHeader: RequestHeader, exception: Throwable) = {
+    val reason: String = if (env.mode == Mode.Dev) exception.getMessage else reasonPhrase(
+      HttpResponseStatus.INTERNAL_SERVER_ERROR.code)
     Future.successful(
-      if (env.mode == Mode.Dev) {
-        InternalServerError(Json.obj("error" -> exception.getMessage))
-      } else {
-        InternalServerError(Json.obj("error" -> reasonPhrase(500)))
-      }
+      InternalServerError(Json.obj("error" -> reason))
     )
   }
 }

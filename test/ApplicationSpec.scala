@@ -3,7 +3,7 @@ import play.api.test._
 import play.api.test.Helpers._
 
 /**
- * Test the application controllers
+ * Test the application controllers.
  */
 class ApplicationSpec extends PlaySpec with OneAppPerTest {
 
