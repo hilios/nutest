@@ -1,6 +1,6 @@
 import com.typesafe.config.ConfigFactory
 
-lazy val conf = ConfigFactory.load()
+lazy val conf = ConfigFactory.parseFile(new File("./conf/application.conf")).resolve()
 
 name := conf.getString("app.name")
 

@@ -8,18 +8,24 @@ import play.api.test.Helpers._
 class ApplicationSpec extends PlaySpec with OneAppPerTest {
 
   "Routes" should {
-    "send 404 on a bad request" in  {
-      route(app, FakeRequest(GET, "/boum")).map(status(_)) mustBe Some(NOT_FOUND)
+    "send 404 on a bad request as an JSON" in  {
+      val error = route(app, FakeRequest(GET, "/boum")).get
+
+      status(error) mustBe NOT_FOUND
+      contentType(error) mustBe Some("application/json")
+      contentAsString(error) must include ("error")
+      contentAsString(error) must include ("error")
     }
   }
 
   "HomeController" should {
-    "render the index page" in {
+    "render the application name and version" in {
       val home = route(app, FakeRequest(GET, "/")).get
 
       status(home) mustBe OK
       contentType(home) mustBe Some("application/json")
-      contentAsString(home) must include ("OK")
+      contentAsString(home) must include ("version")
+      contentAsString(home) must include ("name")
     }
   }
 }
