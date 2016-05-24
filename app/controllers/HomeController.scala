@@ -16,6 +16,6 @@ class HomeController @Inject() (env: Environment, conf: Configuration) extends C
    * Returns the application status.
    */
   def index = Action {
-    Ok(Json.obj("name" -> conf.getString("app.name"), "version" -> conf.getString("app.version"))
+    Ok(Json.obj("name" -> conf.getString("app.name"), "version" -> conf.getString("app.version")))
   }
 }
