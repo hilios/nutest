@@ -69,7 +69,7 @@ class RewardService(invites: Seq[(Int, Int)]) {
       * search algorithm.
       */
     def DFS(node: Int, visited: Set[Int], depth: Int): Seq[(Int, Int)] = {
-      // Not expand repeated states (i.e. circular references) removing the visited
+      // Not expand repeated states (i.e. circular references)
       val children = graph.getOrElse(node, Set.empty) -- visited
       if (children.nonEmpty) {
         // Expand each children node that not goes to node zero
