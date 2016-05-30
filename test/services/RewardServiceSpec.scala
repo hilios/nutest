@@ -29,10 +29,10 @@ class RewardServiceSpec extends PlaySpec {
       "returns the points from each user in the list" in {
         val service = RewardService(invites)
         val rewards = service.toMap
-        // println(rewards)
+
         rewards must contain (1 -> 2.5)
         rewards must contain (3 -> 1.0)
-        // rewards must contain (2 -> 0)
+        rewards must contain (2 -> 0)
         rewards must contain (4 -> 0)
         rewards must contain (5 -> 0)
         rewards must contain (6 -> 0)

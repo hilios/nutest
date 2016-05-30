@@ -47,7 +47,7 @@ class RewardService(invites: Seq[(Int, Int)]) {
         val current = if (computed contains head._2) (head._1, 0) else head
 
         // Append everything
-        head +: removeDuplicates(tail, computed + head._2)
+        current +: removeDuplicates(tail, computed + head._2)
     }
     // Group by the first value of the tuple and map the second to each of it
     removeDuplicates(list, Set.empty).groupBy(_._1).map { case (k,v) => (k,v.map(_._2).toSet)}
@@ -70,10 +70,11 @@ class RewardService(invites: Seq[(Int, Int)]) {
       */
     def DFS(node: Int, visited: Set[Int], depth: Int): Seq[(Int, Int)] = {
       // Not expand repeated states (i.e. circular references) removing the visited
-      val children = graph.getOrElse(node, Set.empty) -- visited -- Set(0)
+      val children = graph.getOrElse(node, Set.empty) -- visited
       if (children.nonEmpty) {
-        // Expand each children node
-        (node, depth) +: children.flatMap(DFS(_, Set(node) ++ children ++ visited, depth + 1)).toSeq
+        // Expand each children node that not goes to node zero
+        (node, depth) +: children.filterNot(_ == 0)
+          .flatMap(DFS(_, Set(node) ++ children ++ visited, depth + 1)).toSeq
       } else {
         Seq.empty
       }
