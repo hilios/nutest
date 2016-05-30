@@ -7,6 +7,8 @@ A reward system to customers invites.
 
 # Development
 
+Run the develpoment server via `sbt` and open your browser at [http://localhost:9000](http://localhost:9000)
+
 ```shell
 $ sbt run
 # ...
@@ -20,6 +22,5 @@ $ sbt run
 # Unit test
 
 ```shell
-$ sbt clean test
+$ sbt test
 ```
-

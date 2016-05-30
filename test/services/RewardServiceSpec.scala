@@ -39,7 +39,7 @@ class RewardServiceSpec extends PlaySpec {
       }
 
       "not fail with a circular references" in {
-        val service = RewardService((2, 1) +: invites)
+        val service = RewardService(invites :+ (2, 1))
         val rewards = service.toMap
 
         rewards must contain (1 -> 2.5)
