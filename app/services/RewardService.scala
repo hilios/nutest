@@ -3,7 +3,7 @@ package services
 import scala.math.pow
 
 /**
-  * This class calculates the points earned by users based on the number of invites they did.
+  * Calculates the points earned by an users based on the number of confirmed invites they did.
   *
   * The inviter gets (1/2)^k points for each confirmed invitation, where k is the level of the
   * invitation: level 0 (people directly invited) yields 1 point, level 1 (people invited by someone
