@@ -4,3 +4,8 @@
 
 # Show the application status
 GET     /                           controllers.HomeController.index
+
+# Manages the rewards
+GET     /rewards                    controllers.RewardController.read
+POST    /rewards                    controllers.RewardController.create
+PUT     /rewards                    controllers.RewardController.update
