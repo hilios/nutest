@@ -5,7 +5,82 @@ Nutest
 
 A reward system to customers invites.
 
-# Development
+## API Documentation
+
+##### GET /
+
+Returns the API name and version.
+
+```json
+{
+    "name": "nutest",
+    "version": "1.0.0"
+}
+```
+
+##### GET /rewards
+
+Returns the current rewards for each user.
+
+```json
+{
+    "1": 2.75,
+    "2": 0,
+    "3": 1,
+    "4": 0,
+    "5": 0,
+    "6": 0
+}
+```
+
+##### POST /rewards
+
+Overwrite the current invitation list and return the updated rewards list.
+
+**Request:**
+
+```json
+1 2
+2 3
+3 4
+4 5
+```
+
+**Response:**
+
+```json
+{
+    "1": 1.75,
+    "2": 1.5,
+    "3": 1,
+    "4": 0,
+    "5": 0
+}
+```
+
+##### PUT /rewards
+
+Add a new invitation to the current list and return the updated rewards list.
+
+```json
+5 7
+```
+
+**Response:**
+
+```json
+{
+    "1": 2.75,
+    "2": 0,
+    "3": 1.5,
+    "4": 1,
+    "5": 0
+}
+```
+
+
+
+### Development
 
 Run the develpoment server via `sbt` and open your browser at [http://localhost:9000](http://localhost:9000)
 
@@ -19,7 +94,7 @@ $ sbt run
 [info] play.api.Play - Application started (Dev)
 ```
 
-# Unit test
+### Unit test
 
 ```shell
 $ sbt test
