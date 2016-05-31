@@ -14,8 +14,5 @@ class Filters @Inject() (corsFilter: CORSFilter) extends HttpFilters {
   /**
     * Returns a list of filters to be applied to each request.
     */
-  def filters = {
-    println("Filter added")
-    Seq(corsFilter)
-  }
+  def filters = Seq(corsFilter)
 }
