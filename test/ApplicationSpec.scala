@@ -56,12 +56,6 @@ class ApplicationSpec extends PlaySpec with OneAppPerTest {
       contentAsString(home) must include ("version")
       contentAsString(home) must include ("name")
     }
-
-    "include cross-origin resource sharing" in {
-      val home = route(app, FakeRequest(GET, "/")).get
-
-      headers(home) must contain ("Access-Control-Allow-Origin" -> "*")
-    }
   }
 
   "RewardController" when {
