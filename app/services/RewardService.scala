@@ -104,9 +104,10 @@ trait RewardFormat {
     * Implicit JSON write for [[RewardService]] map object.
     */
   implicit val mapWrites: Writes[Map[Int, Double]] = new Writes[Map[Int, Double]] {
-    def writes(map: Map[Int, Double]): JsValue =
-      Json.obj(map.map { case (k, v) =>
-        (k.toString -> JsNumber(v)).asInstanceOf[(String, JsValueWrapper)]
+    def writes(obj: Map[Int, Double]): JsValue =
+      Json.obj(obj.map { case (k, v) =>
+        val kv: (String, JsValueWrapper) = (k.toString, JsNumber(v))
+        kv
       }.toSeq:_*)
   }
 

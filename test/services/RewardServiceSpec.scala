@@ -24,26 +24,24 @@ import org.scalatestplus.play.PlaySpec
 class RewardServiceSpec extends PlaySpec {
   val invites = Seq((1,2), (1,3), (3,4), (2,4), (4,5), (4,6))
 
-  "RewardService" when {
-    "#toMap" should {
-      "returns the points from each user in the list" in {
-        val rewards = RewardService(invites)
+  "RewardService" should {
+    "return the points from each user in the list" in {
+      val rewards = RewardService(invites)
 
-        rewards must contain (1 -> 2.5)
-        rewards must contain (3 -> 1.0)
-        rewards must contain (2 -> 0)
-        rewards must contain (4 -> 0)
-        rewards must contain (5 -> 0)
-        rewards must contain (6 -> 0)
-      }
+      rewards must contain (1 -> 2.5)
+      rewards must contain (3 -> 1.0)
+      rewards must contain (2 -> 0)
+      rewards must contain (4 -> 0)
+      rewards must contain (5 -> 0)
+      rewards must contain (6 -> 0)
+    }
 
-      "not fail with a circular references" in {
-        val rewards = RewardService(invites :+ (2,1))
+    "not fail with a circular references" in {
+      val rewards = RewardService(invites :+ (2,1))
 
-        rewards must contain (1 -> 2.5)
-        // But it will compute the path ... unfortunately
-        rewards must contain (2 -> 1.75)
-      }
+      rewards must contain (1 -> 2.5)
+      // But it will compute the path...
+      rewards must contain (2 -> 1.75)
     }
   }
 }
