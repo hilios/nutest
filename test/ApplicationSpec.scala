@@ -38,7 +38,9 @@ class ApplicationSpec extends PlaySpec with OneAppPerTest {
   }
 
   "Rewards Controller" when {
-    "GET /rewards" ignore {}
+    "GET /rewards" ignore {
+
+    }
 
     "POST /rewards" should {
       "parse the input body and render the rewards" in {
