@@ -15,7 +15,10 @@ class ApplicationSpec extends PlaySpec with OneAppPerTest {
 
   /** Helper method to copy files from one location to another */
   private def copyFile(src: File, dest: File) {
-    if(!dest.exists()) {
+    if(! src.exists()) {
+      src.createNewFile()
+    }
+    if(! dest.exists()) {
       dest.createNewFile()
     }
 
