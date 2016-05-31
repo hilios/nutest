@@ -1,3 +1,4 @@
+# Scala
 logs
 target
 /.idea
@@ -7,4 +8,7 @@ target
 /.settings
 /RUNNING_PID
 invites.txt
-_site
+# Jekyll
+_site/
+.sass-cache/
+.jekyll-metadata
