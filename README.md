@@ -62,6 +62,8 @@ Overwrite the current invitation list and return the updated rewards list.
 
 Add a new invitation to the current list and return the updated rewards list.
 
+**Request:**
+
 ```json
 5 7
 ```
