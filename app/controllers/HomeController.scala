@@ -12,11 +12,11 @@ import play.api.mvc._
  */
 @Singleton
 class HomeController @Inject() (env: Environment, conf: Configuration) extends Controller {
+
   /**
    * Returns the application status.
    */
   def index = Action {
-    Ok(Json.obj("name" -> conf.getString("app.name"), "version" -> conf.getString("app.version"),
-      "status" -> "OK"))
+    Ok(Json.obj("name" -> conf.getString("app.name"), "version" -> conf.getString("app.version"))
   }
 }

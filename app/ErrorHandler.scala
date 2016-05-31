@@ -12,6 +12,7 @@ import scala.concurrent._
   * This class handles errors thrown by the application and returns the reason as an JSON.
   */
 class ErrorHandler @Inject() (env: Environment) extends HttpErrorHandler {
+
   /**
     * Returns a humanized phrase from an HTTP status code.
     *

@@ -11,7 +11,16 @@ import scala.io.Source
   */
 object InviteService {
 
-  lazy val defaultFile = new File("./invites.txt")
+  lazy val defaultFile = {
+    val file = new File("./invites.txt")
+    file.setWritable(true)
+
+    if (! file.exists()) {
+      file.createNewFile()
+    }
+
+    file
+  }
 
   /**
     * Returns the list of invitations
@@ -20,6 +29,7 @@ object InviteService {
 
   /**
     * Saves a invitation file, overwriting old ones.
+    *
     * @param file The invitation file
     * @return The update list
     */
@@ -31,6 +41,7 @@ object InviteService {
 
   /**
     * Add new lines to the invitation file.
+    *
     * @param invites A list of invitations
     * @return The update list
     */
@@ -44,6 +55,7 @@ object InviteService {
 
   /**
     * Returns some file as list of invitation in the format (From, To).
+    *
     * @param file The file to parse
     * @return A list of invitations
     */
@@ -56,6 +68,7 @@ object InviteService {
   /**
     * Returns each line of some file as an item of a list, if no file is given try to open the
     * default.
+    *
     * @param file The file to load
     * @return A list of string
     */
