@@ -27,8 +27,7 @@ class RewardServiceSpec extends PlaySpec {
   "RewardService" when {
     "#toMap" should {
       "returns the points from each user in the list" in {
-        val service = RewardService(invites)
-        val rewards = service.toMap
+        val rewards = RewardService(invites)
 
         rewards must contain (1 -> 2.5)
         rewards must contain (3 -> 1.0)
@@ -39,8 +38,7 @@ class RewardServiceSpec extends PlaySpec {
       }
 
       "not fail with a circular references" in {
-        val service = RewardService(invites :+ (2, 1))
-        val rewards = service.toMap
+        val rewards = RewardService(invites :+ (2,1))
 
         rewards must contain (1 -> 2.5)
         // But it will compute the path ... unfortunately
