@@ -29,9 +29,9 @@ $ sbt run
 $ sbt test
 ```
 
-### API Documentation
+## API Documentation
 
-##### GET /
+#### GET /
 
 Returns the API name and version.
 
@@ -42,7 +42,7 @@ Returns the API name and version.
 }
 ```
 
-##### GET /rewards
+#### GET /rewards
 
 Returns the current rewards for each user.
 
@@ -57,7 +57,7 @@ Returns the current rewards for each user.
 }
 ```
 
-##### POST /rewards
+#### POST /rewards
 
 Overwrite the current invitation list and return the updated rewards list.
 
@@ -82,7 +82,7 @@ Overwrite the current invitation list and return the updated rewards list.
 }
 ```
 
-##### PUT /rewards
+#### PUT /rewards
 
 Add a new invitation to the current list and return the updated rewards list.
 
