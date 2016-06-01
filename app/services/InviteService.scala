@@ -34,7 +34,7 @@ object InviteService {
     * @return The update list
     */
   def save(file: TemporaryFile) = {
-    file.moveTo(defaultFile)
+    file.moveTo(defaultFile, true)
     defaultFile.setWritable(true)
     get()
   }

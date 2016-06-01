@@ -89,7 +89,9 @@ class ApplicationSpec extends PlaySpec with OneAppPerTest {
     }
 
     "POST /rewards" should {
-      val txtFile = FilePart("invites", "a.txt", Some("text/plain"), TemporaryFile(templateFile))
+      val uploadFile = new File("./test/resources/upload.txt")
+
+      val txtFile = FilePart("invites", "a.txt", Some("text/plain"), TemporaryFile(uploadFile))
       val someFile = FilePart("invites", "a.img", None, TemporaryFile())
 
       "parse the input body and render the rewards" in {
@@ -100,9 +102,10 @@ class ApplicationSpec extends PlaySpec with OneAppPerTest {
         contentType(rewards) mustBe Some("application/json")
 
         val output = contentAsJson(rewards)
-        (output \ "1").get mustBe JsNumber(2.5)
-        (output \ "2").get mustBe JsNumber(0.0)
-        (output \ "3").get mustBe JsNumber(1.0)
+        (output \ "1").get mustBe JsNumber(1.5)
+        (output \ "2").get mustBe JsNumber(1.0)
+        (output \ "3").get mustBe JsNumber(0.0)
+        (output \ "4").get mustBe JsNumber(0.0)
       }
 
       "render the errors when a bad request is sent" in {
