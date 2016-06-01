@@ -47,8 +47,8 @@ class RewardController @Inject() (val messagesApi: MessagesApi) extends Controll
   /**
     * Update the invites and render the reward points.
     */
-  def update = Action { request =>
-    val data = request.body.asText.getOrElse("").split("\n")
+  def update = Action(parse.temporaryFile) { request =>
+    val data = InviteService.load(request.body.file)
 
     InvitesForm().fillAndValidate(data).fold(
       formWithErrors => {
