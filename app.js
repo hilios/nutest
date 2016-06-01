@@ -53,7 +53,7 @@ app.controller('RewardController', function($scope, $uibModal, Reward) {
 
 app.controller('FormController', function($scope, $uibModalInstance, FormFactory) {
   $scope.send = function(form) {
-    val handler = FormFactory.create(form);
+    var handler = FormFactory.create(form);
     $uibModalInstance.close(true);
   }
 });
