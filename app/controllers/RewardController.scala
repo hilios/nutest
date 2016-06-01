@@ -29,7 +29,7 @@ class RewardController @Inject() (val messagesApi: MessagesApi) extends Controll
     * Overwrite the invites and render the reward points.
     */
   def create = Action(parse.multipartFormData) { request =>
-    request.body.file("invites").filter(_.contentType.getOrElse("") == "plain/text").map { upload =>
+    request.body.file("invites").filter(_.contentType.getOrElse("") == "text/plain").map { upload =>
       val data = InviteService.load(upload.ref.file)
 
       InvitesForm().fillAndValidate(data).fold(

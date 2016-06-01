@@ -89,7 +89,7 @@ class ApplicationSpec extends PlaySpec with OneAppPerTest {
     }
 
     "POST /rewards" should {
-      val txtFile = FilePart("invites", "a.txt", Some("plain/text"), TemporaryFile(templateFile))
+      val txtFile = FilePart("invites", "a.txt", Some("text/plain"), TemporaryFile(templateFile))
       val someFile = FilePart("invites", "a.img", None, TemporaryFile())
 
       "parse the input body and render the rewards" in {
