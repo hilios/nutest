@@ -1,4 +1,5 @@
 import java.io.{File, FileInputStream, FileOutputStream}
+import java.net.URLEncoder
 
 import org.scalatestplus.play._
 import play.api.libs.json.JsNumber
@@ -55,6 +56,16 @@ class ApplicationSpec extends PlaySpec with OneAppPerTest {
       contentType(home) mustBe Some("application/json")
       contentAsString(home) must include ("version")
       contentAsString(home) must include ("name")
+    }
+
+    "allow cross-origin resource sharing" in {
+      val home = route(app, FakeRequest(GET, "/")
+        .withHeaders(ORIGIN -> "http://localhost:9000")
+        .withHeaders(HOST -> "www.example.com")
+      ).get
+
+      status(home) mustBe OK
+      headers(home) must contain ("Access-Control-Allow-Origin" -> "http://localhost:9000")
     }
   }
 
