@@ -60,7 +60,7 @@ object InviteService {
     * @return A list of invitations
     */
   def parse(file: File): Seq[(Int, Int)] = {
-    load(file) map(_.split(" ") match {
+    load(file) map(_.split(" ") filterNot(_.isEmpty) match {
       case Array(from, to, other @ _*) => (from.toInt, to.toInt)
     })
   }
