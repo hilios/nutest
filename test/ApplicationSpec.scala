@@ -17,7 +17,7 @@ import play.api.test._
 class ApplicationSpec extends PlaySpec with OneAppPerTest {
 
   val defaultFile = new File("./invites.txt")
-  val templateFile = new File("./test/resources/rewards.txt")
+  val templateFile = new File("./test/resources/template.txt")
 
   implicit val anyContentAsMultipartFormWritable: Writeable[AnyContentAsMultipartFormData] = {
     MultipartFormDataWritable.singleton.map(_.mdf)
