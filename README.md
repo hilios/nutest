@@ -63,11 +63,13 @@ Overwrite the current invitation list and return the updated rewards list.
 
 **Request:**
 
-```json
-1 2
-2 3
-3 4
-4 5
+Send a `.txt` file through a multipart form:
+
+```html
+<form action="/rewards" method="POST" enctype="multipart/form-data">
+    <input type="file" name="invites">
+    <button>Submit</button>
+</form>
 ```
 
 **Response:**
