@@ -3,7 +3,7 @@ var app = angular.module('nutest', ['ngResource', 'ui.bootstrap', 'angularFileUp
 /**
  * Services
  */
-app.constant('ApiUrl', 'http://localhost:9000');
+app.constant('ApiUrl', 'https://nutest.herokuapp.com');
 
 /**
  * Models
