@@ -24,7 +24,7 @@
             </li>
             <li>
               <a href="#" data-ng-click="open('upload')">
-                <i class="glyphicon glyphicon-upload"></i>
+                <i class="glyphicon glyphicon-cloud-upload"></i>
                 Upload
               </a>
             </li>
@@ -41,7 +41,7 @@
                 <th class="text-right">Points</th>
               </tr>
             </thead>
-            <tr data-ng-repeat="(key, value) in rewards.list" data-ng-cloak>
+            <tr data-ng-repeat="(key, value) in rewards" data-ng-cloak>
               <td>{{key}}</td>
               <td class="text-right">
                 <span class="badge">{{value}}</span>
@@ -54,7 +54,14 @@
         </div>
       </div>
       <footer class="footer text-right" data-ng-controller="StatusController">
-        <p>v{{version}}</p>
+        <form class="form-inline">
+          <div class="form-group form-group-sm">
+            <div class="input-group">
+              <input type="text" class="form-control" data-ng-model="url" data-ng-model-options="{debounce: 1000}">
+              <div class="input-group-addon">v{{version}}</div>
+            </div>
+          </div>
+        </form>
       </footer>
     </div>
     <script type="text/ng-template" id="add.html">
@@ -64,9 +71,10 @@
         <h3 class="modal-title">Add</h3>
       </div>
       <div class="modal-body">
+        <div class="alert alert-danger" data-ng-show="form.$invalid">Sorry, your form has errors!</div>
         <div class="form-group">
           <label>Invites:</label>
-          <textarea name="name" class="form-control" rows="4"></textarea>
+          <textarea class="form-control" rows="4" data-ng-model="invites"></textarea>
           <p class="help-block">Each line is an invite in the format <code>From To</code>.</p>
         </div>
       </div>
@@ -82,11 +90,12 @@
         <h3 class="modal-title">Upload</h3>
       </div>
       <div class="modal-body">
-          <div class="form-group">
-            <label>File:</label>
-            <input type="file">
-            <p class="help-block">Caution this will overwrite the entire base.</p>
-          </div>
+        <div class="alert alert-danger" data-ng-show="form.$invalid">Sorry, your form has errors!</div>
+        <div class="form-group">
+          <label>File:</label>
+          <input type="file" data-nv-file-select data-uploader="invitesUploader">
+          <p class="help-block">Caution this will overwrite the entire base.</p>
+        </div>
       </div>
       <div class="modal-footer">
         <button type="submit" class="btn btn-default">Submit</button>
@@ -96,6 +105,7 @@
     <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular.min.js"></script>
     <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-resource.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/1.3.3/ui-bootstrap-tpls.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/angular-file-upload/2.3.3/angular-file-upload.min.js"></script>
     <script src="app.js"></script>
     {% endraw %}
   </body>

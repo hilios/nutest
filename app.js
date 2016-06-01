@@ -1,12 +1,15 @@
-var app = angular.module('nutest', ['ngResource', 'ui.bootstrap']);
+var app = angular.module('nutest', ['ngResource', 'ui.bootstrap', 'angularFileUpload']);
 
-app.value('ApiUrl', 'https://nutest.herokuapp.com');
+/**
+ * Services
+ */
+app.constant('ApiUrl', 'http://localhost:9000');
 
 /**
  * Models
  */
 app.factory('Status', function($resource, ApiUrl) {
-  return $resource(ApiUrl + '/')
+  return $resource(ApiUrl + '/');
 });
 
 app.factory('Reward', function($resource, ApiUrl) {
@@ -17,14 +20,15 @@ app.factory('Reward', function($resource, ApiUrl) {
     update: {
       method: 'PUT'
     }
-  })
+  });
 });
 
 /**
  * Controllers
  */
-app.controller('StatusController', function($scope, Status) {
-  $scope.version = "0.0.0"
+app.controller('StatusController', function($scope, Status, ApiUrl) {
+  $scope.version = '*.*.*';
+  $scope.url = ApiUrl;
 
   Status.get(function(data) {
     $scope.version = data.version;
@@ -32,11 +36,11 @@ app.controller('StatusController', function($scope, Status) {
 });
 
 app.controller('RewardController', function($scope, $uibModal, Reward) {
-  $scope.list = {};
+  $scope.rewards = {};
 
   $scope.load = function() {
     Reward.get(function(data) {
-      $scope.list = data;
+      $scope.rewards = data;
     });
   }
   $scope.load();
@@ -46,81 +50,26 @@ app.controller('RewardController', function($scope, $uibModal, Reward) {
       templateUrl: template + '.html',
       controller: 'FormController'
     });
-
+    // Reload when closed
     modal.result.then($scope.load);
   }
 });
 
-app.controller('FormController', function($scope, $uibModalInstance, FormFactory) {
+app.controller('FormController', function($scope, $uibModalInstance, FileUploader, Reward) {
+  $scope.invites = undefined;
+  $scope.invitesUploader = new FileUploader();
+
   $scope.send = function(form) {
-    var handler = FormFactory.create(form);
-    $uibModalInstance.close(true);
-  }
-});
+    form.$setValidity('invites', true);
 
-/**
- * Others
- */
-app.factory('FormFactory', function($parse, $log) {
-  /**
-   * Returns a FormHandler object for the given form.
-   * @param {FormController} form The form instance
-   */
-  function FormHandler(form) {
-    /**
-     * Parse the errors provided from the response to the correct field.
-     * @param {Object} response The HTTP promise response.
-     */
-    this.parseErrors = function(response) {
-      angular.forEach(response.data.errors || {}, function(errors, field) {
-        angular.forEach(errors, function(message) {
-          try {
-            var fieldPath = field.replace(/\[(\d+)\]/g, '_$1');
-            $parse(fieldPath)(form).$setValidity(message, false);
-          } catch (e) {
-            $log.warn('Field ' + field + ' was not found');
-          }
-        });
+    if ($scope.invites) {
+      Reward.update($scope.invites.trim(), function() {
+        $uibModalInstance.close(true);
+      }, function() {
+        form.$setValidity('invites', false);
       });
-    };
-
-    /**
-     * Clear all errors from the given form. Navigate recursively from all sub
-     * forms and fields to set the validity.
-     */
-    this.clearErrors = function() {
-      /**
-       * Iterates through all fields and sub-fields with errors and resets their
-       * validity.
-       * @param {Object} form The form instance
-       */
-      function _clearAll(form) {
-        angular.forEach(form.$error, function(fields, message) {
-          angular.forEach(fields, function(field) {
-            if (field.$setSubmitted) {
-              // Parse nested forms
-              _clearAll(field);
-            } else {
-              field.$setValidity(message, true);
-            }
-          });
-        });
-      }
-      // Start the recursive reset
-      _clearAll(form);
-    };
-    // Start cleaning all errors.
-    this.clearErrors();
-  }
-
-  return {
-    /**
-     * Returns a new instance of the FormHandler.
-     * @param {Object} form The form instance
-     * @return {FormHandler} The FormHandler instance for the given form
-     */
-    create: function NewFormHandler(form) {
-      return new FormHandler(form);
+    } else {
+      // TODO: File upload
     }
-  };
+  }
 });
