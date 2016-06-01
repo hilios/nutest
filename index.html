@@ -8,77 +8,22 @@
     <title>Nutest</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
-    <style media="screen">
-    /* Space out content a bit */
-      body {
-        padding-top: 20px;
-        padding-bottom: 20px;
-      }
-
-      /* Everything gets side spacing for mobile first views */
-      .header,
-      .footer {
-        padding-right: 15px;
-        padding-left: 15px;
-      }
-
-      /* Custom page header */
-      .header {
-        padding-bottom: 20px;
-        border-bottom: 1px solid #e5e5e5;
-      }
-      /* Make the masthead heading the same height as the navigation */
-      .header h3 {
-        margin-top: 0;
-        margin-bottom: 0;
-        line-height: 40px;
-      }
-
-      /* Custom page footer */
-      .footer {
-        padding-top: 19px;
-        color: #777;
-        border-top: 1px solid #e5e5e5;
-      }
-
-      /* Customize container */
-      @media (min-width: 768px) {
-        .container {
-          max-width: 730px;
-        }
-      }
-      .container-narrow > hr {
-        margin: 30px 0;
-      }
-
-      /* Responsive: Portrait tablets and up */
-      @media screen and (min-width: 768px) {
-        /* Remove the padding we set earlier */
-        .header,
-        .footer {
-          padding-right: 0;
-          padding-left: 0;
-        }
-        /* Space out the masthead */
-        .header {
-          margin-bottom: 30px;
-        }
-      }
-    </style>
+    <link rel="stylesheet" href="app.css">
   </head>
   <body>
+    {% raw %}
     <div class="container" data-ng-controller="RewardController">
       <div class="header clearfix">
         <nav>
           <ul class="nav nav-pills pull-right">
             <li>
-              <a href="#">
+              <a href="#" data-ng-click="open('add')">
                 <i class="glyphicon glyphicon-plus"></i>
                 Add
               </a>
             </li>
             <li>
-              <a href="#">
+              <a href="#" data-ng-click="open('upload')">
                 <i class="glyphicon glyphicon-upload"></i>
                 Upload
               </a>
@@ -87,33 +32,6 @@
         </nav>
         <h3 class="text-muted">Nutest</h3>
       </div>
-
-      <div class="panel panel-default">
-        <div class="panel-body">
-          <form>
-            <div class="form-group">
-              <label for="exampleInputEmail1">Invites:</label>
-              <input type="email" class="form-control" id="exampleInputEmail1" placeholder="From To">
-              <p class="help-block">Use commas to send multiples invites (ie: <code>1 2, 2 3</code>).</p>
-            </div>
-            <button type="submit" class="btn btn-default">Submit</button>
-          </form>
-        </div>
-      </div>
-
-      <div class="panel panel-default">
-        <div class="panel-body">
-          <form>
-            <div class="form-group">
-              <label for="exampleInputFile">Upload file:</label>
-              <input type="file">
-              <p class="help-block">Caution this will overwrite the entire base.</p>
-            </div>
-            <button type="submit" class="btn btn-default">Submit</button>
-          </form>
-        </div>
-      </div>
-
       <div class="row">
         <div class="col-lg-12">
           <table class="table table-striped">
@@ -123,39 +41,62 @@
                 <th class="text-right">Points</th>
               </tr>
             </thead>
-            <tr>
-              <td>1</td>
+            <tr data-ng-repeat="(key, value) in rewards.list" data-ng-cloak>
+              <td>{{key}}</td>
               <td class="text-right">
-                <span class="badge">2.75</span>
+                <span class="badge">{{value}}</span>
               </td>
+            </tr>
+            <tr data-ng-show="Object.keys(rewards.list).length == 0">
+              <td colspan="2" class="text-muted text-center"><em>Empty</em></td>
             </tr>
           </table>
         </div>
       </div>
-      <footer class="footer text-right" data-ng-controller="FooterController as footer">
-        <p>v1.0.0</p>
+      <footer class="footer text-right" data-ng-controller="StatusController">
+        <p>v{{version}}</p>
       </footer>
     </div>
+    <script type="text/ng-template" id="add.html">
+    <form name="form" data-ng-submit="send(form)">
+      <div class="modal-header">
+        <button class="close pull-right" type="button" ng-click="$dismiss()">&times;</button>
+        <h3 class="modal-title">Add</h3>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Invites:</label>
+          <textarea name="name" class="form-control" rows="4"></textarea>
+          <p class="help-block">Each line is an invite in the format <code>From To</code>.</p>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="submit" class="btn btn-default">Submit</button>
+      </div>
+    </form>
+    </script>
+    <script  type="text/ng-template" id="upload.html">
+    <form name="form" data-ng-submit="send(form)">
+      <div class="modal-header">
+        <button class="close pull-right" type="button" ng-click="$dismiss()">&times;</button>
+        <h3 class="modal-title">Upload</h3>
+      </div>
+      <div class="modal-body">
+          <div class="form-group">
+            <label>File:</label>
+            <input type="file">
+            <p class="help-block">Caution this will overwrite the entire base.</p>
+          </div>
+      </div>
+      <div class="modal-footer">
+        <button type="submit" class="btn btn-default">Submit</button>
+      </div>
+    </form>
+    </script>
     <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular.min.js"></script>
     <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-resource.js"></script>
-    <script type="text/javascript">
-      angular.module('nutest', ['ngResource'])
-        .value('ApiUrl', 'http://nutest.heroku.com')
-        .factory('Status', function($resource, ApiUrl) {
-          return $resource(ApiUrl + '/')
-        })
-        .factory('Reward', function($resource, ApiUrl) {
-          return $resource(ApiUrl + '/rewards')
-        })
-        .controller('FooterController', function(Status) {
-          // TODO
-          // Status.get(function(data) {
-          //   console.log("OK");
-          // });
-        })
-        .controller('RewardController', function(Reward) {
-          // TODO
-        })
-    </script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/1.3.3/ui-bootstrap-tpls.min.js"></script>
+    <script src="app.js"></script>
+    {% endraw %}
   </body>
 </html>
