@@ -47,7 +47,7 @@ object InviteService {
     */
   def add(invites: Seq[String]) = {
     val fw = new FileWriter(defaultFile, true)
-    invites.foreach(line => fw.write(s"\n$line"))
+    invites.foreach(line => fw.write(s"$line\n"))
     fw.flush()
     fw.close()
     get()
@@ -59,11 +59,9 @@ object InviteService {
     * @param file The file to parse
     * @return A list of invitations
     */
-  def parse(file: File): Seq[(Int, Int)] = {
-    load(file) map(_.split(" ") filterNot(_.isEmpty) match {
-      case Array(from, to, other @ _*) => (from.toInt, to.toInt)
-    })
-  }
+  def parse(file: File): Seq[(Int, Int)] = load(file) map(_.split(" ") match {
+    case Array(from, to, other @ _*) => (from.toInt, to.toInt)
+  })
 
   /**
     * Returns each line of some file as an item of a list, if no file is given try to open the
@@ -72,7 +70,5 @@ object InviteService {
     * @param file The file to load
     * @return A list of string
     */
-  def load(file: File): Seq[String] = {
-    Source.fromFile(file).getLines.toList
-  }
+  def load(file: File): Seq[String] = Source.fromFile(file).getLines.filterNot(_.isEmpty).toList
 }

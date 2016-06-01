@@ -4,7 +4,7 @@ import play.api.data.Form
 import play.api.data.Forms._
 
 /**
-  * Companion object to validate invites requests.
+  * Companion object to validate invites.
   */
 object InvitesForm {
 
@@ -13,9 +13,7 @@ object InvitesForm {
     * @param invite The invite line
     * @return <true> if its valid
     */
-  private def lineConstraint(invite: String): Boolean = {
-    invite.matches("^\\d+ \\d+$")
-  }
+  private def lineConstraint(invite: String): Boolean = invite.matches("^\\d+ \\d+$")
 
   /**
     * Returns an Form for invitations.
