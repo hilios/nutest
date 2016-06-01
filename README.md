@@ -5,7 +5,31 @@ Nutest
 
 A reward system to customers invites.
 
-## API Documentation
+- [API Documentation](#api-documentation)
+- [Web interface](https://hilios.github.io/nutest)
+- [Production API](https://nutest.herokuapp.com)
+
+### Development
+
+Run the develpoment server via `sbt` and open your browser at [http://localhost:9000](http://localhost:9000)
+
+```shell
+$ sbt run
+# ...
+[info] p.c.s.NettyServer - Listening for HTTP on /0:0:0:0:0:0:0:0:9000
+
+(Server started, use Ctrl+D to stop and go back to the console...)
+
+[info] play.api.Play - Application started (Dev)
+```
+
+### Unit test
+
+```shell
+$ sbt test
+```
+
+### API Documentation
 
 ##### GET /
 
@@ -78,26 +102,4 @@ Add a new invitation to the current list and return the updated rewards list.
     "4": 1,
     "5": 0
 }
-```
-
-
-
-### Development
-
-Run the develpoment server via `sbt` and open your browser at [http://localhost:9000](http://localhost:9000)
-
-```shell
-$ sbt run
-# ...
-[info] p.c.s.NettyServer - Listening for HTTP on /0:0:0:0:0:0:0:0:9000
-
-(Server started, use Ctrl+D to stop and go back to the console...)
-
-[info] play.api.Play - Application started (Dev)
-```
-
-### Unit test
-
-```shell
-$ sbt test
 ```
