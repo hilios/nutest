@@ -29,26 +29,23 @@ class RewardController @Inject() (val messagesApi: MessagesApi) extends Controll
     * Overwrite the invites and render the reward points.
     */
   def create = Action(parse.multipartFormData) { request =>
-    request.body.file("invites").filter(_.contentType.getOrElse("") == "plain/text")
-      .map { upload =>
-        println(upload.contentType)
+    request.body.file("invites").filter(_.contentType.getOrElse("") == "plain/text").map { upload =>
+      val data = InviteService.load(upload.ref.file)
 
-        val data = InviteService.load(upload.ref.file)
-
-        InvitesForm().fillAndValidate(data).fold(
-          formWithErrors => {
-            BadRequest(Json.obj("errors" -> formWithErrors.errorsAsJson))
-          },
-          form => {
-            // Save this file
-            val invites = InviteService.save(upload.ref)
-            val rewards = RewardService(invites)
-            Ok(Json.toJson(rewards))
-          }
-        )
-      }.getOrElse {
-        BadRequest(Json.obj("errors" -> "Bad file input"))
-      }
+      InvitesForm().fillAndValidate(data).fold(
+        formWithErrors => {
+          BadRequest(Json.obj("errors" -> formWithErrors.errorsAsJson))
+        },
+        form => {
+          // Save this file
+          val invites = InviteService.save(upload.ref)
+          val rewards = RewardService(invites)
+          Ok(Json.toJson(rewards))
+        }
+      )
+    }.getOrElse {
+      BadRequest(Json.obj("errors" -> "Missing text file"))
+    }
   }
 
   /**

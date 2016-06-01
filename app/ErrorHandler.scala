@@ -30,7 +30,7 @@ class ErrorHandler @Inject() (env: Environment) extends HttpErrorHandler {
     * @return The error JSON output
     */
   def onClientError(requestHeader: RequestHeader, statusCode: Int, message: String) = {
-    val reason: String = reasonPhrase(statusCode)
+    val reason: String = if (message.isEmpty) reasonPhrase(statusCode) else message
     Future.successful(
       Status(statusCode)(Json.obj("error" -> reason))
     )

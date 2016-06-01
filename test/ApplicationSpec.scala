@@ -1,8 +1,13 @@
 import java.io.{File, FileInputStream, FileOutputStream}
-import java.net.URLEncoder
+import java.nio.file.{Files, StandardCopyOption}
 
+import helpers.MultipartFormDataWritable
 import org.scalatestplus.play._
+import play.api.http.Writeable
+import play.api.libs.Files.TemporaryFile
 import play.api.libs.json.JsNumber
+import play.api.mvc.{AnyContentAsMultipartFormData, MultipartFormData}
+import play.api.mvc.MultipartFormData.FilePart
 import play.api.test.Helpers._
 import play.api.test._
 
@@ -14,20 +19,19 @@ class ApplicationSpec extends PlaySpec with OneAppPerTest {
   val defaultFile = new File("./invites.txt")
   val templateFile = new File("./test/resources/rewards.txt")
 
+  implicit val anyContentAsMultipartFormWritable: Writeable[AnyContentAsMultipartFormData] = {
+    MultipartFormDataWritable.singleton.map(_.mdf)
+  }
+
   /** Helper method to copy files from one location to another */
   private def copyFile(src: File, dest: File) {
-    if(! src.exists()) {
+    if (! src.exists()) {
       src.createNewFile()
     }
-    if(! dest.exists()) {
+    if (! dest.exists()) {
       dest.createNewFile()
     }
-
-    val input = new FileInputStream(src).getChannel
-    val output = new FileOutputStream(dest).getChannel
-    output.transferFrom(input, 0, input.size())
-    input.close()
-    output.close()
+    Files.copy(src.toPath, dest.toPath, StandardCopyOption.REPLACE_EXISTING)
   }
 
   /**
@@ -85,13 +89,12 @@ class ApplicationSpec extends PlaySpec with OneAppPerTest {
     }
 
     "POST /rewards" should {
+      val txtFile = FilePart("invites", "a.txt", Some("plain/text"), TemporaryFile(templateFile))
+      val someFile = FilePart("invites", "a.img", None, TemporaryFile())
+
       "parse the input body and render the rewards" in {
-        val rewards = route(app, FakeRequest(POST, "/rewards").withBody(
-          """
-            |1 2
-            |2 3
-            |3 4
-          """.stripMargin.trim)).get
+        val form = MultipartFormData(Map.empty, Seq(txtFile), Seq.empty)
+        val rewards = route(app, FakeRequest(POST, "/rewards").withMultipartFormDataBody(form)).get
 
         status(rewards) mustBe OK
         contentType(rewards) mustBe Some("application/json")
@@ -103,7 +106,8 @@ class ApplicationSpec extends PlaySpec with OneAppPerTest {
       }
 
       "render the errors when a bad request is sent" in {
-        val rewards = route(app, FakeRequest(POST, "/rewards").withBody("a b")).get
+        val form = MultipartFormData(Map.empty, Seq(someFile), Seq.empty)
+        val rewards = route(app, FakeRequest(POST, "/rewards").withMultipartFormDataBody(form)).get
 
         status(rewards) mustBe BAD_REQUEST
         contentType(rewards) mustBe Some("application/json")
