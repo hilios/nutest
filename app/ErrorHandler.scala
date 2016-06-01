@@ -11,7 +11,7 @@ import scala.concurrent._
 /**
   * This class handles errors thrown by the application and returns the reason as an JSON.
   */
-class ErrorHandler @Inject() (env: Environment, log: Logger) extends HttpErrorHandler {
+class ErrorHandler @Inject() (env: Environment) extends HttpErrorHandler {
 
   /**
     * Returns a humanized phrase from an HTTP status code.
@@ -44,8 +44,7 @@ class ErrorHandler @Inject() (env: Environment, log: Logger) extends HttpErrorHa
     * @return The error JSON output
     */
   def onServerError(requestHeader: RequestHeader, exception: Throwable) = {
-    log.error(exception.toString)
-    exception.printStackTrace()
+    Logger.error(exception.getMessage, exception)
 
     val reason = reasonPhrase(HttpResponseStatus.INTERNAL_SERVER_ERROR.code)
     Future.successful(
