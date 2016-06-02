@@ -78,13 +78,11 @@ class ApplicationSpec extends PlaySpec with OneAppPerTest {
     }
 
     "POST /rewards" should {
-      val uploadFile = new File("./test/resources/upload.txt")
-
-      val txtFile = FilePart("invites", "mock.txt", Some("text/plain"), TemporaryFile(uploadFile))
-      val someFile = FilePart("invites", "mock.img", None, TemporaryFile())
-
       "parse the input body and render the rewards" in {
-        val form = MultipartFormData(Map.empty, Seq(txtFile), Seq.empty)
+        val uploadFile = new File("./test/resources/upload.txt")
+        val filePart = FilePart("invites", "mock.txt", Some("text/plain"), TemporaryFile(uploadFile))
+
+        val form = MultipartFormData(Map.empty, Seq(filePart), Seq.empty)
         val rewards = route(app, FakeRequest(POST, "/rewards").withMultipartFormDataBody(form)).get
 
         status(rewards) mustBe OK
@@ -97,8 +95,19 @@ class ApplicationSpec extends PlaySpec with OneAppPerTest {
         (output \ "4").toOption mustBe Some(JsNumber(0.0))
       }
 
-      "render the errors when a bad request is sent" in {
-        val form = MultipartFormData(Map.empty, Seq(someFile), Seq.empty)
+      "render an error when a bad formatted file is sent" in {
+        val wrongFile = new File("./test/resources/wrong.txt")
+        val filePart = FilePart("invites", "mock.txt", Some("text/plain"), TemporaryFile(wrongFile))
+
+        val form = MultipartFormData(Map.empty, Seq(filePart), Seq.empty)
+        val rewards = route(app, FakeRequest(POST, "/rewards").withMultipartFormDataBody(form)).get
+      }
+
+      "render an error when a bad request is sent" in {
+        val wrongFile = new File("./test/resources/wrong.txt")
+        val filePart = FilePart("invites", "mock.img", None, TemporaryFile())
+
+        val form = MultipartFormData(Map.empty, Seq(filePart), Seq.empty)
         val rewards = route(app, FakeRequest(POST, "/rewards").withMultipartFormDataBody(form)).get
 
         status(rewards) mustBe BAD_REQUEST
@@ -134,7 +143,6 @@ class ApplicationSpec extends PlaySpec with OneAppPerTest {
       "clear all invites" in {
         val delete = route(app, FakeRequest(DELETE, "/rewards")).get
         status(delete) mustBe OK
-
 
         val rewards = route(app, FakeRequest(GET, "/rewards")).get
         status(rewards) mustBe OK

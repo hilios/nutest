@@ -54,10 +54,8 @@ class RewardController @Inject() (val messagesApi: MessagesApi, inviteService: I
   /**
     * Update the invites and render the reward points.
     */
-  def update = Action { request =>
-    val data = request.body.asText.getOrElse("")
-
-    InvitesForm().fillAndValidate(data).fold(
+  def update = Action(parse.tolerantText) { request =>
+    InvitesForm().fillAndValidate(request.body).fold(
       formWithErrors => {
         BadRequest(Json.obj("errors" -> formWithErrors.errorsAsJson))
       },

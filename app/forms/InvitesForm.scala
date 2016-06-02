@@ -14,7 +14,7 @@ object InvitesForm {
     * @return <true> if its valid
     */
   private def lineConstraint(invite: String): Boolean = {
-    invite.trim.split("\n").filterNot(_.matches("^\\d+ \\d+$")).length == 0
+    invite.trim.split("\n").exists(_.matches("^\\d+ \\d+$"))
   }
 
   /**
@@ -22,7 +22,7 @@ object InvitesForm {
     */
   def apply() = Form(
     single(
-      "invites" -> text.verifying(lineConstraint(_))
+      "invites" -> text.verifying("Wrong format", lineConstraint(_))
     )
   )
 }
