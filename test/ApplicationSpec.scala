@@ -1,10 +1,11 @@
 import java.io.File
+import java.nio.file.Files
+import java.nio.file.StandardCopyOption._
 
 import helpers.MultipartFormDataWritable
 import org.scalatest.TestData
 import org.scalatestplus.play._
 import play.api.Application
-import play.api.cache.CacheApi
 import play.api.http.Writeable
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.Files.TemporaryFile
@@ -13,9 +14,8 @@ import play.api.mvc.MultipartFormData.FilePart
 import play.api.mvc.{AnyContentAsMultipartFormData, MultipartFormData}
 import play.api.test.Helpers._
 import play.api.test._
-import services.{InviteService, InviteService$}
+import services.InviteService
 
-import scala.io.Source
 
 /**
  * Test the application controllers.
@@ -78,12 +78,18 @@ class ApplicationSpec extends PlaySpec with OneAppPerTest {
     }
 
     "POST /rewards" should {
-      val uploadFile = new File("./test/resources/upload.txt")
-      val inputFile = new File("./test/resources/input.txt")
-      val wrongFile = new File("./test/resources/wrong.txt")
+      // Create tmp file
+      val uploadFile = Files.createTempFile(null, null)
+      val inputFile = Files.createTempFile(null, null)
+      val wrongFile = Files.createTempFile(null, null)
+      // Copy resource files
+      Files.copy(new File("./test/resources/upload.txt").toPath, uploadFile, REPLACE_EXISTING)
+      Files.copy(new File("./test/resources/input.txt").toPath, inputFile, REPLACE_EXISTING)
+      Files.copy(new File("./test/resources/wrong.txt").toPath, wrongFile, REPLACE_EXISTING)
 
       "parse the input body and render the rewards" in {
-        val filePart = FilePart("invites", "a.txt", Some("text/plain"), TemporaryFile(uploadFile))
+        val file = TemporaryFile(uploadFile.toFile)
+        val filePart = FilePart("invites", "a.txt", Some("text/plain"), file)
 
         val form = MultipartFormData(Map.empty, Seq(filePart), Seq.empty)
         val rewards = route(app, FakeRequest(POST, "/rewards").withMultipartFormDataBody(form)).get
@@ -99,14 +105,27 @@ class ApplicationSpec extends PlaySpec with OneAppPerTest {
       }
 
       "parse a large input file correctly" in {
-        val filePart = FilePart("invites", "a.txt", Some("text/plain"), TemporaryFile(inputFile))
+        val file = TemporaryFile(inputFile.toFile)
+        val filePart = FilePart("invites", "a.txt", Some("text/plain"), file)
 
         val form = MultipartFormData(Map.empty, Seq(filePart), Seq.empty)
         val rewards = route(app, FakeRequest(POST, "/rewards").withMultipartFormDataBody(form)).get
         status(rewards) mustBe OK
       }
 
-      "render an error when a bad request is sent" in {
+      "render an error when a bad formatted file is sent" in {
+        val file = TemporaryFile(wrongFile.toFile)
+        val filePart = FilePart("invites", "a.jpg", Some("text/plain"), file)
+
+        val form = MultipartFormData(Map.empty, Seq(filePart), Seq.empty)
+        val rewards = route(app, FakeRequest(POST, "/rewards").withMultipartFormDataBody(form)).get
+
+        status(rewards) mustBe BAD_REQUEST
+        contentType(rewards) mustBe Some("application/json")
+        contentAsString(rewards) must include ("errors")
+      }
+
+      "render an error when non text file is sent" in {
         val filePart = FilePart("invites", "a.jpg", Some("image/jpeg"), TemporaryFile())
 
         val form = MultipartFormData(Map.empty, Seq(filePart), Seq.empty)
