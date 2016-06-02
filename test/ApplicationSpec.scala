@@ -79,6 +79,7 @@ class ApplicationSpec extends PlaySpec with OneAppPerTest {
 
     "POST /rewards" should {
       val uploadFile = new File("./test/resources/upload.txt")
+      val inputFile = new File("./test/resources/input.txt")
       val wrongFile = new File("./test/resources/wrong.txt")
 
       "parse the input body and render the rewards" in {
@@ -97,8 +98,8 @@ class ApplicationSpec extends PlaySpec with OneAppPerTest {
         (output \ "4").toOption mustBe Some(JsNumber(0.0))
       }
 
-      "render an error when a bad formatted file is sent" in {
-        val filePart = FilePart("invites", "a.txt", Some("text/plain"), TemporaryFile(wrongFile))
+      "parse a large input file correctly" in {
+        val filePart = FilePart("invites", "a.txt", Some("text/plain"), TemporaryFile(inputFile))
 
         val form = MultipartFormData(Map.empty, Seq(filePart), Seq.empty)
         val rewards = route(app, FakeRequest(POST, "/rewards").withMultipartFormDataBody(form)).get
