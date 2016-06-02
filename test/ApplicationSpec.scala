@@ -13,7 +13,7 @@ import play.api.mvc.MultipartFormData.FilePart
 import play.api.mvc.{AnyContentAsMultipartFormData, MultipartFormData}
 import play.api.test.Helpers._
 import play.api.test._
-import services.InviteService$
+import services.{InviteService, InviteService$}
 
 import scala.io.Source
 
@@ -35,8 +35,8 @@ class ApplicationSpec extends PlaySpec with OneAppPerTest {
     val app = new GuiceApplicationBuilder().build()
 
     // Setup base invites
-    val inviteApi = app.injector.instanceOf[InviteService]
-    inviteApi.set(invites)
+    val inviteService = app.injector.instanceOf[InviteService]
+    inviteService.set(invites)
 
     app
   }
