@@ -102,6 +102,7 @@ class ApplicationSpec extends PlaySpec with OneAppPerTest {
 
         val form = MultipartFormData(Map.empty, Seq(filePart), Seq.empty)
         val rewards = route(app, FakeRequest(POST, "/rewards").withMultipartFormDataBody(form)).get
+        status(rewards) mustBe OK
       }
 
       "render an error when a bad request is sent" in {
