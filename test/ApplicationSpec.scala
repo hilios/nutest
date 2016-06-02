@@ -78,9 +78,11 @@ class ApplicationSpec extends PlaySpec with OneAppPerTest {
     }
 
     "POST /rewards" should {
+      val uploadFile = new File("./test/resources/upload.txt")
+      val wrongFile = new File("./test/resources/wrong.txt")
+
       "parse the input body and render the rewards" in {
-        val uploadFile = new File("./test/resources/upload.txt")
-        val filePart = FilePart("invites", "mock.txt", Some("text/plain"), TemporaryFile(uploadFile))
+        val filePart = FilePart("invites", "a.txt", Some("text/plain"), TemporaryFile(uploadFile))
 
         val form = MultipartFormData(Map.empty, Seq(filePart), Seq.empty)
         val rewards = route(app, FakeRequest(POST, "/rewards").withMultipartFormDataBody(form)).get
@@ -96,16 +98,14 @@ class ApplicationSpec extends PlaySpec with OneAppPerTest {
       }
 
       "render an error when a bad formatted file is sent" in {
-        val wrongFile = new File("./test/resources/wrong.txt")
-        val filePart = FilePart("invites", "mock.txt", Some("text/plain"), TemporaryFile(wrongFile))
+        val filePart = FilePart("invites", "a.txt", Some("text/plain"), TemporaryFile(wrongFile))
 
         val form = MultipartFormData(Map.empty, Seq(filePart), Seq.empty)
         val rewards = route(app, FakeRequest(POST, "/rewards").withMultipartFormDataBody(form)).get
       }
 
       "render an error when a bad request is sent" in {
-        val wrongFile = new File("./test/resources/wrong.txt")
-        val filePart = FilePart("invites", "mock.img", None, TemporaryFile())
+        val filePart = FilePart("invites", "a.jpg", Some("image/jpeg"), TemporaryFile())
 
         val form = MultipartFormData(Map.empty, Seq(filePart), Seq.empty)
         val rewards = route(app, FakeRequest(POST, "/rewards").withMultipartFormDataBody(form)).get
