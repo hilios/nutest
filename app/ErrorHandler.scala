@@ -4,7 +4,7 @@ import play.api.http.HttpErrorHandler
 import play.api.libs.json.Json
 import play.api.mvc.Results._
 import play.api.mvc._
-import play.api.{Environment, Mode}
+import play.api.{Environment, Logger, Mode}
 
 import scala.concurrent._
 
@@ -12,6 +12,7 @@ import scala.concurrent._
   * This class handles errors thrown by the application and returns the reason as an JSON.
   */
 class ErrorHandler @Inject() (env: Environment) extends HttpErrorHandler {
+
   /**
     * Returns a humanized phrase from an HTTP status code.
     *
@@ -29,7 +30,7 @@ class ErrorHandler @Inject() (env: Environment) extends HttpErrorHandler {
     * @return The error JSON output
     */
   def onClientError(requestHeader: RequestHeader, statusCode: Int, message: String) = {
-    val reason: String = if (message != "") message else reasonPhrase(statusCode)
+    val reason: String = if (message.isEmpty) reasonPhrase(statusCode) else message
     Future.successful(
       Status(statusCode)(Json.obj("error" -> reason))
     )
@@ -43,8 +44,9 @@ class ErrorHandler @Inject() (env: Environment) extends HttpErrorHandler {
     * @return The error JSON output
     */
   def onServerError(requestHeader: RequestHeader, exception: Throwable) = {
-    val reason: String = if (env.mode == Mode.Dev) exception.getMessage else reasonPhrase(
-      HttpResponseStatus.INTERNAL_SERVER_ERROR.code)
+    Logger.error(exception.getMessage, exception)
+
+    val reason = reasonPhrase(HttpResponseStatus.INTERNAL_SERVER_ERROR.code)
     Future.successful(
       InternalServerError(Json.obj("error" -> reason))
     )

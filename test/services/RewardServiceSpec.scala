@@ -1,6 +1,5 @@
 package services
 
-import org.scalatest.WordSpec
 import org.scalatestplus.play.PlaySpec
 
 /**
@@ -23,9 +22,26 @@ import org.scalatestplus.play.PlaySpec
   * Note that 2 invited 4, but, since 3 invited 4 first, customer 3 gets the points.
   */
 class RewardServiceSpec extends PlaySpec {
+  val invites = Seq((1,2), (1,3), (3,4), (2,4), (4,5), (4,6))
+
   "RewardService" should {
-    "do something" in {
-      true must be(true)
+    "return the points from each user in the list" in {
+      val rewards = RewardService(invites)
+
+      rewards must contain (1 -> 2.5)
+      rewards must contain (3 -> 1.0)
+      rewards must contain (2 -> 0)
+      rewards must contain (4 -> 0)
+      rewards must contain (5 -> 0)
+      rewards must contain (6 -> 0)
+    }
+
+    "not fail with a circular references" in {
+      val rewards = RewardService(invites :+ (2,1))
+
+      rewards must contain (1 -> 2.5)
+      // But it will compute the path...
+      rewards must contain (2 -> 1.75)
     }
   }
 }

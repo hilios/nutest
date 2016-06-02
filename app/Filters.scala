@@ -14,5 +14,5 @@ class Filters @Inject() (corsFilter: CORSFilter) extends HttpFilters {
   /**
     * Returns a list of filters to be applied to each request.
     */
-  override val filters = Seq(corsFilter)
+  def filters = Seq(corsFilter)
 }
