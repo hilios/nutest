@@ -129,6 +129,21 @@ class ApplicationSpec extends PlaySpec with OneAppPerTest {
         contentAsString(rewards) must include ("errors")
       }
     }
+
+    "DELETE /reward" should {
+      "clear all invites" in {
+        val delete = route(app, FakeRequest(DELETE, "/rewards")).get
+        status(delete) mustBe OK
+
+
+        val rewards = route(app, FakeRequest(GET, "/rewards")).get
+        status(rewards) mustBe OK
+        contentType(rewards) mustBe Some("application/json")
+
+        val output = contentAsJson(rewards)
+        (output \ "1").toOption mustBe None
+      }
+    }
   }
 
   "ErrorHandler" should {

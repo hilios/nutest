@@ -70,4 +70,9 @@ class RewardController @Inject() (val messagesApi: MessagesApi, inviteService: I
       }
     )
   }
+
+  def delete = Action {
+    inviteService.clear()
+    Ok
+  }
 }
