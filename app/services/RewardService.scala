@@ -82,8 +82,8 @@ object RewardService {
         Seq.empty
       }
     }
-    // Filter the root node, map the
-    traverse(root, Set.empty, -1).filterNot(_._2 < 0).map(x => pow(0.5, x._2)).sum
+    // Remove the root node, calculate the points
+    traverse(root, Set.empty, -1).drop(1).map(x => pow(0.5, x._2)).sum
   }
 }
 

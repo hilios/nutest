@@ -104,7 +104,7 @@ class ApplicationSpec extends PlaySpec with OneAppPerTest {
         (output \ "4").toOption mustBe Some(JsNumber(0.0))
       }
 
-      "parse a large input file correctly" in {
+      "parse the large input file correctly" in {
         val file = TemporaryFile(inputFile.toFile)
         val filePart = FilePart("invites", "a.txt", Some("text/plain"), file)
 
@@ -160,7 +160,7 @@ class ApplicationSpec extends PlaySpec with OneAppPerTest {
       }
     }
 
-    "DELETE /reward" should {
+    "DELETE /rewards" should {
       "clear all invites" in {
         val delete = route(app, FakeRequest(DELETE, "/rewards")).get
         status(delete) mustBe OK

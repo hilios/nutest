@@ -5,7 +5,7 @@ import org.scalatestplus.play.PlaySpec
 class InviteServiceSpec extends PlaySpec {
   "InviteService" when {
     "#parse" should {
-      "split several lines into a sequence of tuples" in {
+      "split string lines into a sequence of tuple" in {
         val seq = InviteService.parse(
           """
             |1 2
