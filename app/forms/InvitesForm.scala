@@ -13,14 +13,16 @@ object InvitesForm {
     * @param invite The invite line
     * @return <true> if its valid
     */
-  private def lineConstraint(invite: String): Boolean = invite.matches("^\\d+ \\d+$")
+  private def lineConstraint(invite: String): Boolean = {
+    invite.trim.split("\n").filterNot(_.matches("^\\d+ \\d+$")).length == 0
+  }
 
   /**
     * Returns an Form for invitations.
     */
   def apply() = Form(
     single(
-      "invites" -> seq(text.verifying(lineConstraint(_)))
+      "invites" -> text.verifying(lineConstraint(_))
     )
   )
 }

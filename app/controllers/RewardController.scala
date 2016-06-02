@@ -8,19 +8,21 @@ import play.api.libs.json.Json
 import play.api.mvc.{Action, Controller}
 import services.{InviteService, RewardFormat, RewardService}
 
+import scala.io.Source
+
 /**
   * Receives a text file with the input and exposes the ranking on a JSON format on a HTTP endpoint.
   * Also, create another endpoint to add a new invitation.
   */
 @Singleton
-class RewardController @Inject() (val messagesApi: MessagesApi) extends Controller
-    with I18nSupport with RewardFormat {
+class RewardController @Inject() (val messagesApi: MessagesApi, inviteService: InviteService)
+    extends Controller with I18nSupport with RewardFormat {
 
   /**
     * Renders the current reward points.
     */
   def read = Action {
-    val invites = InviteService.get()
+    val invites = inviteService.get
     val rewards = RewardService(invites)
     Ok(Json.toJson(rewards))
   }
@@ -30,16 +32,17 @@ class RewardController @Inject() (val messagesApi: MessagesApi) extends Controll
     */
   def create = Action(parse.multipartFormData) { request =>
     request.body.file("invites").filter(_.contentType.getOrElse("") == "text/plain").map { upload =>
-      val data = InviteService.load(upload.ref.file)
+      val data = Source.fromFile(upload.ref.file).mkString
 
       InvitesForm().fillAndValidate(data).fold(
         formWithErrors => {
           BadRequest(Json.obj("errors" -> formWithErrors.errorsAsJson))
         },
         form => {
-          // Save this file
-          val invites = InviteService.save(upload.ref)
-          val rewards = RewardService(invites)
+          val invites = InviteService.parse(form)
+          inviteService.set(invites)
+
+          val rewards = RewardService(inviteService.get)
           Ok(Json.toJson(rewards))
         }
       )
@@ -51,17 +54,18 @@ class RewardController @Inject() (val messagesApi: MessagesApi) extends Controll
   /**
     * Update the invites and render the reward points.
     */
-  def update = Action(parse.temporaryFile) { request =>
-    val data = InviteService.load(request.body.file)
+  def update = Action { request =>
+    val data = request.body.asText.getOrElse("")
 
     InvitesForm().fillAndValidate(data).fold(
       formWithErrors => {
         BadRequest(Json.obj("errors" -> formWithErrors.errorsAsJson))
       },
       form => {
-        // Write each invite to the file
-        val invites = InviteService.add(data)
-        val rewards = RewardService(invites)
+        val invites = InviteService.parse(form)
+        inviteService.add(invites)
+
+        val rewards = RewardService(inviteService.get)
         Ok(Json.toJson(rewards))
       }
     )
