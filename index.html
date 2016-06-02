@@ -53,8 +53,11 @@
           </table>
         </div>
       </div>
-      <footer class="footer text-right" data-ng-controller="StatusController">
-        <form class="form-inline">
+      <footer class="footer" data-ng-controller="StatusController">
+        <button class="btn btn-sm" data-ng-click="delete()">
+          <i class="glyphicon glyphicon-trash"></i>
+        </button>
+        <form class="form-inline pull-right">
           <div class="form-group form-group-sm">
             <div class="input-group">
               <input type="text" class="form-control" data-ng-model="url" data-ng-model-options="{debounce: 1000}">

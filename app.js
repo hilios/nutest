@@ -21,6 +21,9 @@ app.factory('Reward', function($resource, ApiUrl) {
     },
     update: {
       method: 'PUT'
+    },
+    delete: {
+      method: 'DELETE'
     }
   });
 });
@@ -54,6 +57,13 @@ app.controller('RewardController', function($scope, $uibModal, Reward) {
     });
     // Reload when closed
     modal.result.then($scope.load);
+  }
+
+  $scope.delete = function() {
+    var confirmed = confirm('Are you sure? This can not be undone.');
+    if (confirmed) {
+      Reward.delete($scope.load);
+    }
   }
 });
 
