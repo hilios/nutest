@@ -124,7 +124,6 @@ app.directive('spinner', function() {
     templateUrl: 'spinner.html',
     link: function(scope, element) {
       scope.displayLoading = false;
-      scope.displayError = false;
       // Prevent clicks at the interface
       element.on('click', function(event) {
         // Only in root node, aka overlay
@@ -136,7 +135,6 @@ app.directive('spinner', function() {
       // Show spiner and hide error
       scope.$on('loading:start', function() {
         scope.displayLoading = true;
-        scope.displayError = false;
       });
       // Hide spiner
       scope.$on('loading:complete', function() {
@@ -144,11 +142,7 @@ app.directive('spinner', function() {
       });
       // Hide spiner and show error
       scope.$on('loading:error', function(event, rejection) {
-        if (rejection && (rejection.status === 400)) {
-          scope.displayLoading = false;
-        } else {
-          scope.displayError = true;
-        }
+        scope.displayLoading = false;
       });
     }
   };
