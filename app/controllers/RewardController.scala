@@ -34,12 +34,11 @@ class RewardController @Inject() (val messagesApi: MessagesApi, inviteService: I
     request.body.file("invites").filter(_.contentType.getOrElse("") == "text/plain").map { upload =>
       val data = Source.fromFile(upload.ref.file).mkString
 
-      InvitesForm().fillAndValidate(data).fold(
+      InvitesForm().bind(Map("invites" -> data)).fold(
         formWithErrors => {
           BadRequest(Json.obj("errors" -> formWithErrors.errorsAsJson))
         },
-        form => {
-          val invites = InviteService.parse(form)
+        invites => {
           inviteService.set(invites)
 
           val rewards = RewardService(inviteService.get)
@@ -55,12 +54,11 @@ class RewardController @Inject() (val messagesApi: MessagesApi, inviteService: I
     * Update the invites and render the reward points.
     */
   def update = Action(parse.tolerantText) { request =>
-    InvitesForm().fillAndValidate(request.body).fold(
+    InvitesForm().bind(Map("invites" -> request.body)).fold(
       formWithErrors => {
         BadRequest(Json.obj("errors" -> formWithErrors.errorsAsJson))
       },
-      form => {
-        val invites = InviteService.parse(form)
+      invites => {
         inviteService.add(invites)
 
         val rewards = RewardService(inviteService.get)

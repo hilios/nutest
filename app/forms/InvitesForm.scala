@@ -2,6 +2,7 @@ package forms
 
 import play.api.data.Form
 import play.api.data.Forms._
+import services.InviteService
 
 /**
   * Companion object to validate invites.
@@ -23,6 +24,9 @@ object InvitesForm {
   def apply() = Form(
     single(
       "invites" -> text.verifying("Wrong format", lineConstraint(_))
+        .transform[Seq[(Int, Int)]](
+          InviteService.parse, _.map(x => s"${x._1} ${x._2}").mkString("\n")
+        )
     )
   )
 }
